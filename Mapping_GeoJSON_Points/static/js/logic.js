@@ -1,38 +1,8 @@
 // // Create the map object with a center and zoom level.
 var map = L.map('mapid', {
-    center: [37.5, -122.5],
-    zoom: 10,
+    center: [30, 30],
+    zoom: 2,
 });
-
-// Add GeoJSON data.
-let sanFranAirport =
-{"type":"FeatureCollection","features":[{
-    "type":"Feature",
-    "properties":{
-        "id":"3469",
-        "name":"San Francisco International Airport",
-        "city":"San Francisco",
-        "country":"United States",
-        "faa":"SFO",
-        "icao":"KSFO",
-        "alt":"13",
-        "tz-offset":"-8",
-        "dst":"A",
-        "tz":"America/Los_Angeles"},
-        "geometry":{
-            "type":"Point",
-            "coordinates":[-122.375,37.61899948120117]}}
-]};
-
-// Grabbing our GeoJSON data.
-L.geoJson(sanFranAirport, {
-    // We turn each feature into a marker on the map.
-    onEachFeature: function(feature, layer) {
-      console.log(feature);
-      layer.bindPopup("<h2>" + feature.properties.city + "</h2>");
-    }
-
-  }).addTo(map);
 
 // Add tile layer that will be the background of our map.
 let tile_url = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}';
@@ -41,4 +11,19 @@ let streets = L.tileLayer(tile_url, {
     maxZoom: 18,
     accessToken: API_KEY
 })
-    streets.addTo(map);
+streets.addTo(map);
+
+// Accessing the airport GeoJSON URL
+let airportData = "https://raw.githubusercontent.com/Thinguyen23/Thi_Mapping_Earthquakes/master/majorAirports.json";
+
+// Grabbing the airport GeoJson data
+d3.json(airportData).then(function(data) {
+    console.log(data);
+    // Creating a GeoJSON layer with the retrieved data
+    L.geoJSON(data, {
+        onEachFeature: function(feature, layer) {
+            console.log(layer);
+            layer.bindPopup("<h2>Airport Code: "+ feature.properties.faa +"</h2> <hr> <h3>Airport Name: " + feature.properties.name + "</h3>" );
+        }
+    }).addTo(map);
+});
